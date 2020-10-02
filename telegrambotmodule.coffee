@@ -23,7 +23,8 @@ telegrambotmodule.initialize = () ->
     cfg = allModules.configmodule
     chatId = cfg.telegramChatId
     bot = new Slimbot(cfg.telegramToken)
-    # bot.on("message", handleMessage)
+    bot.on("message", handleMessage)
+    log "initialized telegram bot!"
     return
 
 ############################################################
