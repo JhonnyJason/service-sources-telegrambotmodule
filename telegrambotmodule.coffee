@@ -36,5 +36,6 @@ export initialize = () ->
 ############################################################
 export send = (message) ->
     log "send"
-    bot.sendMessage(chatId, "#{hostname}: #{message}")
+    try bot.sendMessage(chatId, "#{hostname}: #{message}")
+    catch err then log err
     return
