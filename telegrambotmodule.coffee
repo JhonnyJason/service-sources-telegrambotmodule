@@ -18,10 +18,12 @@ hostname = ""
 ############################################################
 export initialize = () ->
     log "initialize"
+    
     chatId = c.get("telegramChatId")
     token = c.get("telegramToken")
     name = c.get("name")
 
+    # use name as hostname if we have a name in the config
     if name then hostname = name
     else hostname = fs.readFileSync("/etc/hostname", "utf8")
 
