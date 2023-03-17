@@ -1,46 +1,38 @@
-telegrambotmodule = {name: "telegrambotmodule"}
 ############################################################
-#region printLogFunctions
-log = (arg) ->
-    if allModules.debugmodule.modulesToDebug["telegrambotmodule"]?  then console.log "[telegrambotmodule]: " + arg
-    return
-ostr = (obj) -> JSON.stringify(obj, null, 4)
-olog = (obj) -> log "\n" + ostr(obj)
-print = (arg) -> console.log(arg)
+#region debug
+import { createLogFunctions } from "thingy-debug"
+{log, olog} = createLogFunctions("telegrambotmodule")
 #endregion
 
 
 ############################################################
-Slimbot = require("slimbot")
+import fs from "fs"
+import Slimbot from "slimbot"
+import * as c from "./configmodule.js"
 
 ############################################################
 bot = null
 chatId = null
+hostname = ""
 
 ############################################################
-telegrambotmodule.initialize = () ->
-    log "telegrambotmodule.initialize"
-    cfg = allModules.configmodule
-    chatId = cfg.telegramChatId
-    bot = new Slimbot(cfg.telegramToken)
-    # bot.on("message", handleMessage)
-    # bot.startPolling()
-    # log "initialized telegram bot!"
+export initialize = () ->
+    log "initialize"
+    chatId = c.get("telegramChatId")
+    token = c.get("telegramToken")
+    name = c.get("name")
+
+    if name then hostname = name
+    else hostname = fs.readFileSync("/etc/hostname", "utf8")
+
+    hostname = hostname.replaceAll("\n", "")
+    hostname = hostname.replaceAll(" ", "")
+
+    bot = new Slimbot(token)
     return
 
 ############################################################
-handleMessage = (message) ->
-    log "handleMessage"
-    olog message
-    chatId = message.chat.id
-    bot.sendMessage(chatId, "thisChatId: " + chatId)
+export send = (message) ->
+    log "send"
+    bot.sendMessage(chatId, "#{hostname}: #{message}")
     return
-
-############################################################
-telegrambotmodule.send = (message) ->
-    log "telegrambotmodule.send"
-    bot.sendMessage(chatId, message)
-    return
-
-    
-module.exports = telegrambotmodule
